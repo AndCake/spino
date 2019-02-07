@@ -1,0 +1,12 @@
+{
+  "name": "splinter",
+  "version": "1.0.0",
+  "description": "A super-tiny, fully-fledged, faster preact drop-in",
+  "main": "index.js",
+  "author": "Robert Kunze",
+  "license": "MIT",
+  "dependencies": {
+    "jsdom": "^13.2.0",
+    "nano-dom": "^0.2.4"
+  }
+}
