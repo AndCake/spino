@@ -179,11 +179,11 @@ function applyDiff(target, sourceElement, context) {
                 targetElement[attr] = attribute || '';
                 skippedAttributes += 1;
             } else if (targetElement.getAttribute(jsxAttributeMap[attr] || attr) !== attribute) {
-                targetElement.setAttribute(jsxAttributeMap[attr] || attr, attribute);
+                targetElement.setAttribute(jsxAttributeMap[attr] || attr, attribute, 1);
             }
         });
         // remove superfluous attributes
-        if (Object.keys(targetElement.attributes).length > attributeKeys.length - skippedAttributes) {
+        if (targetElement.attributes.length > attributeKeys.length - skippedAttributes) {
             Array.from(targetElement.attributes).forEach((attr) => {
                 if (typeof sourceElement.attributes[attr.name] === 'undefined') {
                     targetElement.removeAttribute(attr.name);
@@ -278,7 +278,7 @@ export class AsyncComponent extends Component {
     }
 }
 
-export function render(vdom, target) { applyDiff(target, vdom); }
+export function render(vdom, target) { options.applyVDOM(target, vdom); }
 export function rerender() {
     while (dirtyComponents.length > 0) {
         const component = dirtyComponents.shift();

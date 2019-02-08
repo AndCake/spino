@@ -1,6 +1,6 @@
 import * as Preact from './index';
 import { render, renderShallow } from './html-renderer';
-import { describe, it, expect } from './test/test-runner';
+import { describe, it, expect } from 'chawan';
 
 describe('HTML Renderer', () => {
     it('can render simple vdom trees', () => {
