@@ -1,5 +1,5 @@
 #!/usr/bin/env -S node --experimental-modules --no-warnings
-import * as Preact from './index';
+import * as Spino from './index';
 import { renderShallow } from './html-renderer';
 import Document from 'nano-dom/src/dom';
 import { describe, it, beforeEach, afterEach, expect } from 'chawan';
@@ -14,24 +14,24 @@ describe('Component', () => {
             main = document.querySelector('main');
         });
         it('can apply a simple node', () => {
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', { className: 'test' }, 'Hello World!'));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', { className: 'test' }, 'Hello World!'));
             expect(main.firstElementChild.classList.contains('test')).toBeTrue();
             expect(main.innerHTML).toInclude('Hello World!');
             expect(main.innerHTML).toEqual('<div class="test">Hello World!</div>');
         });
         it('can apply a vdom node to a DOM text node', () => {
             main.firstElementChild.innerHTML = 'test';
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, Preact.h('p', null, 'test2')));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h('p', null, 'test2')));
             expect(main.firstElementChild.childNodes[0].nodeType).toEqual(1);
             expect(main.firstElementChild.childNodes[0].nodeName.toUpperCase()).toEqual('P');
             expect(main.firstElementChild.childNodes[0].innerHTML).toEqual('test2');
         });
         it('can deal with simple vdom trees', () => {
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, [
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, [
                 'text for starters',
-                Preact.h('div', { 'data-name': 'name-value' }, [
-                    Preact.h('em', null, 'Lorem ipsum'),
-                    Preact.h('strong', null, 'dolor sit amet'),
+                Spino.h('div', { 'data-name': 'name-value' }, [
+                    Spino.h('em', null, 'Lorem ipsum'),
+                    Spino.h('strong', null, 'dolor sit amet'),
                 ], 'consect etutor'),
                 'text for enders',
             ]));
@@ -39,18 +39,18 @@ describe('Component', () => {
         });
         it('can deal with updating existing nodes', () => {
             main.firstElementChild.innerHTML = '<div class="test" name="hello"><p>test</p><q>test2</q></div>';
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, Preact.h('div', { class: 'test', for: 'me' }, [Preact.h('i', null, 'test')])));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h('div', { class: 'test', for: 'me' }, [Spino.h('i', null, 'test')])));
             expect(main.firstElementChild.innerHTML).toEqual('<div class="test" for="me"><i>test</i></div>');
         });
         it('can mount sub components', () => {
             let counter = 0;
-            class SubComponent extends Preact.Component {
+            class SubComponent extends Spino.Component {
                 render() {
                     counter += 1;
-                    return Preact.h('div', { class: 'test' }, 'test-text');
+                    return Spino.h('div', { class: 'test' }, 'test-text');
                 }
             }
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, Preact.h(SubComponent)));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent)));
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
@@ -74,9 +74,9 @@ describe('Component', () => {
              */
             function SubComponent(props) {
                 counter += 1;
-                return Preact.h('div', { class: 'greeting' }, `Hello, ${props.name}!`);
+                return Spino.h('div', { class: 'greeting' }, `Hello, ${props.name}!`);
             }
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, Preact.h(SubComponent, { name: 'Test' })));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent, { name: 'Test' })));
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
@@ -91,10 +91,10 @@ describe('Component', () => {
         });
 
         it('keeps the context throughout hierarchies', () => {
-            class SubComponent extends Preact.Component {
+            class SubComponent extends Spino.Component {
                 render(props, state, context) {
                     expect(context).toEqual(this.context);
-                    return Preact.h('div', { class: `context-${context}` }, props.name);
+                    return Spino.h('div', { class: `context-${context}` }, props.name);
                 }
             }
             /**
@@ -102,20 +102,20 @@ describe('Component', () => {
              * @return {VDOMNode} a vdom node to be rendered
              */
             function StatelessComponent() {
-                return Preact.h('div', { class: 'greeting' }, 'Hello, ', Preact.h(SubComponent, { name: 'Test' }));
+                return Spino.h('div', { class: 'greeting' }, 'Hello, ', Spino.h(SubComponent, { name: 'Test' }));
             }
-            class ContextProvider extends Preact.Component {
+            class ContextProvider extends Spino.Component {
                 constructor(props, context) {
                     super(props, context);
                     this.context = 'it-is-done';
                 }
 
                 render() {
-                    return Preact.h('span', null, this.props.children);
+                    return Spino.h('span', null, this.props.children);
                 }
             }
 
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, Preact.h(ContextProvider, null, Preact.h(StatelessComponent, { name: 'Test' }))));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(ContextProvider, null, Spino.h(StatelessComponent, { name: 'Test' }))));
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
@@ -131,17 +131,17 @@ describe('Component', () => {
         it('can update sub components that were already rendered', () => {
             let renderCounter = 0;
             let mountCounter = 0;
-            class SubComponent extends Preact.Component {
+            class SubComponent extends Spino.Component {
                 render() {
                     renderCounter += 1;
-                    return Preact.h('div', { class: 'test' }, `test-${this.props.counter || 0}-text`);
+                    return Spino.h('div', { class: 'test' }, `test-${this.props.counter || 0}-text`);
                 }
 
                 componentDidMount() {
                     mountCounter += 1;
                 }
             }
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, Preact.h(SubComponent, { counter: 0 }, ['test', Preact.h('div', null, 'lorem')])));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent, { counter: 0 }, ['test', Spino.h('div', null, 'lorem')])));
 
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
@@ -149,7 +149,7 @@ describe('Component', () => {
                         expect(main.firstElementChild.innerHTML).toEqual('<div class="test">test-0-text</div>');
                         expect(mountCounter).toEqual(1);
                         expect(renderCounter).toEqual(1);
-                        Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, Preact.h(SubComponent, { counter: 1 }, ['test', Preact.h('div', null, 'lorem')])));
+                        Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent, { counter: 1 }, ['test', Spino.h('div', null, 'lorem')])));
                         resolve();
                     } /* istanbul ignore next */ catch (e) {
                         /* istanbul ignore next */
@@ -165,18 +165,18 @@ describe('Component', () => {
 
         it('can deal with event listeners', () => {
             let counter = 0;
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', { class: 'to-click', onClick: () => { counter += 1; } }, [null, 'test']));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', { class: 'to-click', onClick: () => { counter += 1; } }, [null, 'test']));
             main.querySelector('.to-click').click();
             expect(counter).toEqual(1);
         });
 
         it('can handle dangerouslySetInnerHTML', () => {
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', { class: 'to-click', dangerouslySetInnerHTML: { __html: '<div class="test">do exist</div>' } }));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', { class: 'to-click', dangerouslySetInnerHTML: { __html: '<div class="test">do exist</div>' } }));
             expect(main.querySelector('.test')).toExist();
             expect(main.querySelector('.test').innerHTML).toEqual('do exist');
         });
         it('can handle style attribute objects', () => {
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', {
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', {
                 style: {
                     color: 'red',
                     backgroundColor: 'green',
@@ -188,31 +188,31 @@ describe('Component', () => {
         it('can deal with special attributes', () => {
             // for JSDOM somehow the order of attribute definition is important.
             // If type and value are reversed, the resulting value will not be 123 but 'on'
-            const input = Preact.h('input', { type: 'radio', value: '123' });
-            Preact.options.applyVDOM(main.firstElementChild, input);
+            const input = Spino.h('input', { type: 'radio', value: '123' });
+            Spino.options.applyVDOM(main.firstElementChild, input);
             expect(main.firstElementChild.value).toEqual('123');
             expect(main.firstElementChild.getAttribute('value')).toEqual('123');
             expect(main.firstElementChild.getAttribute('type')).toEqual('radio');
         });
         it('will unmount sub components when they are removed from the DOM', () => {
             let counter = 0;
-            class SubComponent extends Preact.Component {
+            class SubComponent extends Spino.Component {
                 componentWillUnmount() {
                     counter += 1;
                 }
 
                 render() {
-                    return Preact.h('div', { class: 'test' }, 'test-text');
+                    return Spino.h('div', { class: 'test' }, 'test-text');
                 }
             }
-            Preact.options.applyVDOM(main.firstElementChild, Preact.h('div', null, Preact.h(SubComponent)));
+            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent)));
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
                         expect(counter).toEqual(0);
                         expect(main.querySelector('.test')).toExist();
 
-                        Preact.options.applyVDOM(main.firstElementChild, Preact.h('div'));
+                        Spino.options.applyVDOM(main.firstElementChild, Spino.h('div'));
                         expect(counter).toEqual(1);
                         expect(main.querySelector('.test')).toNotExist();
                         resolve();
@@ -224,15 +224,15 @@ describe('Component', () => {
             });
         });
         it('will provide DOM nodes as VDOM clones when accessing props.children', () => {
-            class Component extends Preact.Component {
+            class Component extends Spino.Component {
                 render(props) {
-                    return Preact.h('div', null, Preact.h('p', null, 'huhu!'), props.children);
+                    return Spino.h('div', null, Spino.h('p', null, 'huhu!'), props.children);
                 }
             }
             main.firstElementChild.innerHTML = 'lorem <div class="test">ipsum</div> dolor';
-            const vnode = Preact.h(Component, null, Array.from(main.firstElementChild.childNodes));
+            const vnode = Spino.h(Component, null, Array.from(main.firstElementChild.childNodes));
             main.firstElementChild.innerHTML = '';
-            Preact.options.applyVDOM(main.firstElementChild, vnode);
+            Spino.options.applyVDOM(main.firstElementChild, vnode);
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
@@ -257,20 +257,20 @@ describe('Component', () => {
         let renderResult = '';
 
         beforeEach(() => {
-            originalOptions.applyVDOM = Preact.options.applyVDOM;
-            Preact.options.applyVDOM = (target, source) => {
-                renderResult = renderShallow(source, Preact.options);
+            originalOptions.applyVDOM = Spino.options.applyVDOM;
+            Spino.options.applyVDOM = (target, source) => {
+                renderResult = renderShallow(source, Spino.options);
                 return {};
             };
         });
 
         afterEach(() => {
             renderResult = '';
-            Preact.options.applyVDOM = originalOptions.applyVDOM;
+            Spino.options.applyVDOM = originalOptions.applyVDOM;
         });
         it('calls render during mount', () => {
             let counter = 0;
-            class X extends Preact.Component {
+            class X extends Spino.Component {
                 render() {
                     counter += 1;
                     return '';
@@ -282,7 +282,7 @@ describe('Component', () => {
 
         it('calls componentDidMount after DOM insertion', () => {
             let counter = 0;
-            class X extends Preact.Component {
+            class X extends Spino.Component {
                 componentDidMount() {
                     counter += 1;
                     expect(renderResult).toNotBeEmpty();
@@ -295,7 +295,7 @@ describe('Component', () => {
 
         it('calls shouldUpdateComponent before rendering', () => {
             let counter = 0;
-            class X extends Preact.Component {
+            class X extends Spino.Component {
                 shouldComponentUpdate(newProps, newState) {
                     if (counter) {
                         expect(newProps).toDeepEqual(this.props);
@@ -321,7 +321,7 @@ describe('Component', () => {
 
         it('calls componentDidUpdate after rendering', () => {
             let counter = 0;
-            class X extends Preact.Component {
+            class X extends Spino.Component {
                 componentDidUpdate() {
                     counter += 1;
                 }
@@ -339,7 +339,7 @@ describe('Component', () => {
         it('calls componentDidCatch if an error occurs during rendering', () => {
             let counter = 0;
             //* eslint-disable react/require-render-return * /
-            class X extends Preact.Component {
+            class X extends Spino.Component {
                 componentDidCatch(error) {
                     counter += 1;
                     expect(error.message).toEqual('render error');
@@ -355,21 +355,21 @@ describe('Component', () => {
         });
 
         it('calls componentWillUnmount on sub components when rendering changes', () => {
-            Preact.options.applyVDOM = originalOptions.applyVDOM;
+            Spino.options.applyVDOM = originalOptions.applyVDOM;
             const document = new Document('<html><body><div></div></body></html>');
             let counter = 0;
 
-            class X extends Preact.Component {
+            class X extends Spino.Component {
                 componentWillUnmount() {
                     counter += 1;
                 }
 
                 render() {
-                    return Preact.h('li', {});
+                    return Spino.h('li', {});
                 }
             }
 
-            class XParent extends Preact.Component {
+            class XParent extends Spino.Component {
                 constructor(props) {
                     super(props);
                     this.state = {
@@ -380,11 +380,11 @@ describe('Component', () => {
                 render() {
                     let content;
                     if (this.state.withX) {
-                        content = Preact.h(X, {});
+                        content = Spino.h(X, {});
                     } else {
-                        content = Preact.h('div', {});
+                        content = Spino.h('div', {});
                     }
-                    return Preact.h('div', { className: 'test' }, content);
+                    return Spino.h('div', { className: 'test' }, content);
                 }
             }
 

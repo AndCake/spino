@@ -1,7 +1,7 @@
 {
-    "name": "splinter",
+    "name": "spino",
     "version": "1.0.0",
-    "description": "A super-tiny, fully-fledged, faster preact drop-in",
+    "description": "A super-tiny, fully-fledged, preact drop-in",
     "main": "index.mjs",
     "author": "Robert Kunze <quixotic.worx@gmail.com>",
     "license": "MIT",
