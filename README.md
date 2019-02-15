@@ -48,6 +48,7 @@ Your components can inherit directly from it in order to implement themselves.
 **Example:**
 
 ```js
+/** @jsx Spino.h */
 import * as Spino from 'spino';
 
 export default class FirstComponent extends Spino.Component {
@@ -78,6 +79,7 @@ If your components need to retrieve their props asynchronously during their exec
 **Example:**
 
 ```js
+/** @jsx Spino.h */
 import * as Spino from 'spino';
 
 export default class SecondComponent extends Spino.AsyncComponent {
@@ -107,7 +109,7 @@ The following options can be used:
 
 `options.applyVDOM(target : DOMElement, sourceElement : VDOMNode, context : Object) : DOMElement`
 
-- This will replace the regular rendering algorithm of a component into the DOM - helpful for testing or to do server-side rendering
+- Allows for replacing the regular rendering algorithm of a component into the DOM - helpful for testing or to do server-side rendering
 
 `options.baseClass`
 
@@ -138,8 +140,9 @@ Renders a (functional) component or a VDOM tree.
 **Example:**
 
 ```js
-import { h } from 'spino';
-import AppCore from './app-core.js';
+/** @jsx Spino.h */
+import * as Spino from 'spino';
+import AppCore from './app-core';
 
 function App(props) {
     return (
@@ -149,7 +152,7 @@ function App(props) {
     );
 }
 
-render(App({ url: 'https://www.google.com/' }), document.body);
+Spino.render(App({ url: 'https://www.google.com/' }), document.body);
 ```
 
 ### rerender()
@@ -168,7 +171,9 @@ renders the given VDOM tree and returns a string of the rendered result.
 **Example:**
 
 ```js
+/** @jsx Spino.h */
 import MyComponent from './my-component';
+import * as Spino from 'spino';
 import { render } from 'spino/html-renderer.mjs';
 
 renderResult = render(<MyComponent name="World"/>);
@@ -183,6 +188,7 @@ renders the given VDOM node in such a way that sub components will be kept as is
 **Example:**
 
 ```js
+/** @jsx Spino.h */
 import * as Spino from 'spino';
 import ListItem from './list-item';
 import { renderShallow } from 'spino/html-renderer.mjs';

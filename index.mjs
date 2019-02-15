@@ -286,10 +286,13 @@ export function rerender() {
     }
 }
 
-if (typeof requestAnimationFrame !== 'undefined') {
-    requestAnimationFrame(function frameRequest(now) {
-        rerender();
-        requestAnimationFrame(frameRequest);
-    });
+export function triggerRenderLoop() {
+    if (typeof requestAnimationFrame !== 'undefined') {
+        requestAnimationFrame(function frameRequest(now) {
+            rerender();
+            requestAnimationFrame(frameRequest);
+        });
+    }
 }
+triggerRenderLoop();
 /* eslint-enable no-underscore-dangle, no-use-before-define */

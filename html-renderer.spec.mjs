@@ -3,6 +3,10 @@ import { render, renderShallow } from './html-renderer';
 import { describe, it, expect } from 'chawan';
 
 describe('HTML Renderer', () => {
+    it('can render a string', () => {
+        expect(render(false)).toEqual(false);
+        expect(render('test')).toEqual('test');
+    });
     it('can render simple vdom trees', () => {
         let vdom = Spino.h('div', { class: 'test' }, 'my content');
         let result = renderShallow(vdom, Spino.options);
@@ -38,6 +42,11 @@ describe('HTML Renderer', () => {
         const vdom = Spino.h('div', null, Spino.h(X, { data: 1234 }, 'test'));
         const result = renderShallow(vdom, Spino.options);
         expect(result).toEqual('<div><X data="1234">test</X></div>');
+    });
+
+    it('can deal with shallowly rendered components if they\'re anonymous', () => {
+        const actual = renderShallow(Spino.h(() => Spino.h('div', {}, 'test')), Spino.options);
+        expect(actual).toEqual('<UnknownComponent></UnknownComponent>');
     });
 
     it('can render vdom trees with contextualized components', () => {

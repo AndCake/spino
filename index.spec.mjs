@@ -14,32 +14,32 @@ describe('Component', () => {
             main = document.querySelector('main');
         });
         it('can apply a simple node', () => {
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', { className: 'test' }, 'Hello World!'));
+            Spino.render(Spino.h('div', { className: 'test' }, 'Hello World!'), main.firstElementChild);
             expect(main.firstElementChild.classList.contains('test')).toBeTrue();
             expect(main.innerHTML).toInclude('Hello World!');
             expect(main.innerHTML).toEqual('<div class="test">Hello World!</div>');
         });
         it('can apply a vdom node to a DOM text node', () => {
             main.firstElementChild.innerHTML = 'test';
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h('p', null, 'test2')));
+            Spino.render(Spino.h('div', null, Spino.h('p', null, 'test2')), main.firstElementChild);
             expect(main.firstElementChild.childNodes[0].nodeType).toEqual(1);
             expect(main.firstElementChild.childNodes[0].nodeName.toUpperCase()).toEqual('P');
             expect(main.firstElementChild.childNodes[0].innerHTML).toEqual('test2');
         });
         it('can deal with simple vdom trees', () => {
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, [
+            Spino.render(Spino.h('div', null, [
                 'text for starters',
                 Spino.h('div', { 'data-name': 'name-value' }, [
                     Spino.h('em', null, 'Lorem ipsum'),
                     Spino.h('strong', null, 'dolor sit amet'),
                 ], 'consect etutor'),
                 'text for enders',
-            ]));
+            ]), main.firstElementChild);
             expect(main.firstElementChild.innerHTML).toEqual('text for starters<div data-name="name-value"><em>Lorem ipsum</em><strong>dolor sit amet</strong>consect etutor</div>text for enders');
         });
         it('can deal with updating existing nodes', () => {
             main.firstElementChild.innerHTML = '<div class="test" name="hello"><p>test</p><q>test2</q></div>';
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h('div', { class: 'test', for: 'me' }, [Spino.h('i', null, 'test')])));
+            Spino.render(Spino.h('div', null, Spino.h('div', { class: 'test', for: 'me' }, [Spino.h('i', null, 'test')])), main.firstElementChild);
             expect(main.firstElementChild.innerHTML).toEqual('<div class="test" for="me"><i>test</i></div>');
         });
         it('can mount sub components', () => {
@@ -50,7 +50,7 @@ describe('Component', () => {
                     return Spino.h('div', { class: 'test' }, 'test-text');
                 }
             }
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent)));
+            Spino.render(Spino.h('div', null, Spino.h(SubComponent)), main.firstElementChild);
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
@@ -76,7 +76,7 @@ describe('Component', () => {
                 counter += 1;
                 return Spino.h('div', { class: 'greeting' }, `Hello, ${props.name}!`);
             }
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent, { name: 'Test' })));
+            Spino.render(Spino.h('div', null, Spino.h(SubComponent, { name: 'Test' })), main.firstElementChild);
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
@@ -115,7 +115,7 @@ describe('Component', () => {
                 }
             }
 
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(ContextProvider, null, Spino.h(StatelessComponent, { name: 'Test' }))));
+            Spino.render(Spino.h('div', null, Spino.h(ContextProvider, null, Spino.h(StatelessComponent, { name: 'Test' }))), main.firstElementChild);
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
@@ -141,7 +141,7 @@ describe('Component', () => {
                     mountCounter += 1;
                 }
             }
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent, { counter: 0 }, ['test', Spino.h('div', null, 'lorem')])));
+            Spino.render(Spino.h('div', null, Spino.h(SubComponent, { counter: 0 }, ['test', Spino.h('div', null, 'lorem')])), main.firstElementChild);
 
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
@@ -149,7 +149,7 @@ describe('Component', () => {
                         expect(main.firstElementChild.innerHTML).toEqual('<div class="test">test-0-text</div>');
                         expect(mountCounter).toEqual(1);
                         expect(renderCounter).toEqual(1);
-                        Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent, { counter: 1 }, ['test', Spino.h('div', null, 'lorem')])));
+                        Spino.render(Spino.h('div', null, Spino.h(SubComponent, { counter: 1 }, ['test', Spino.h('div', null, 'lorem')])), main.firstElementChild);
                         resolve();
                     } /* istanbul ignore next */ catch (e) {
                         /* istanbul ignore next */
@@ -165,23 +165,23 @@ describe('Component', () => {
 
         it('can deal with event listeners', () => {
             let counter = 0;
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', { class: 'to-click', onClick: () => { counter += 1; } }, [null, 'test']));
+            Spino.render(Spino.h('div', { class: 'to-click', onClick: () => { counter += 1; } }, [null, 'test']), main.firstElementChild);
             main.querySelector('.to-click').click();
             expect(counter).toEqual(1);
         });
 
         it('can handle dangerouslySetInnerHTML', () => {
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', { class: 'to-click', dangerouslySetInnerHTML: { __html: '<div class="test">do exist</div>' } }));
+            Spino.render(Spino.h('div', { class: 'to-click', dangerouslySetInnerHTML: { __html: '<div class="test">do exist</div>' } }), main.firstElementChild);
             expect(main.querySelector('.test')).toExist();
             expect(main.querySelector('.test').innerHTML).toEqual('do exist');
         });
         it('can handle style attribute objects', () => {
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', {
+            Spino.render(Spino.h('div', {
                 style: {
                     color: 'red',
                     backgroundColor: 'green',
                 },
-            }));
+            }), main.firstElementChild);
             expect(main.firstElementChild.style.color).toEqual('red');
             expect(main.firstElementChild.style.backgroundColor).toEqual('green');
         });
@@ -189,7 +189,7 @@ describe('Component', () => {
             // for JSDOM somehow the order of attribute definition is important.
             // If type and value are reversed, the resulting value will not be 123 but 'on'
             const input = Spino.h('input', { type: 'radio', value: '123' });
-            Spino.options.applyVDOM(main.firstElementChild, input);
+            Spino.render(input, main.firstElementChild);
             expect(main.firstElementChild.value).toEqual('123');
             expect(main.firstElementChild.getAttribute('value')).toEqual('123');
             expect(main.firstElementChild.getAttribute('type')).toEqual('radio');
@@ -205,14 +205,14 @@ describe('Component', () => {
                     return Spino.h('div', { class: 'test' }, 'test-text');
                 }
             }
-            Spino.options.applyVDOM(main.firstElementChild, Spino.h('div', null, Spino.h(SubComponent)));
+            Spino.render(Spino.h('div', null, Spino.h(SubComponent)), main.firstElementChild);
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
                         expect(counter).toEqual(0);
                         expect(main.querySelector('.test')).toExist();
 
-                        Spino.options.applyVDOM(main.firstElementChild, Spino.h('div'));
+                        Spino.render(Spino.h('div'), main.firstElementChild);
                         expect(counter).toEqual(1);
                         expect(main.querySelector('.test')).toNotExist();
                         resolve();
@@ -232,7 +232,7 @@ describe('Component', () => {
             main.firstElementChild.innerHTML = 'lorem <div class="test">ipsum</div> dolor';
             const vnode = Spino.h(Component, null, Array.from(main.firstElementChild.childNodes));
             main.firstElementChild.innerHTML = '';
-            Spino.options.applyVDOM(main.firstElementChild, vnode);
+            Spino.render(vnode, main.firstElementChild);
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     try {
@@ -249,6 +249,23 @@ describe('Component', () => {
                     }
                 }, 0);
             });
+        });
+
+        it('allows for usage of ref', () => {
+            const document = new Document('<html><body><div></div></body></html>');
+            let reference = undefined;
+            class X extends Spino.Component {
+                myRef(ref) {
+                    reference = ref;
+                }
+                render() {
+                    return Spino.h('div', {ref: this.myRef}, 'hello world!');
+                }
+            }
+            new X({}).mount(document.body);
+            expect(reference).toExist();
+            expect(reference.innerHTML).toEqual('hello world!');
+            expect(reference.querySelector).toBeA('function');
         });
     });
 
@@ -352,6 +369,15 @@ describe('Component', () => {
             //* eslint-enable react/require-render-return * /
             new X({}).mount({});
             expect(counter).toEqual(1);
+
+            class Y extends Spino.Component {
+                render() {
+                    throw new Error('Another render error');
+                }
+            }
+            expect(() => {
+                new Y({}).mount({});
+            }).toThrow('Another render error');
         });
 
         it('calls componentWillUnmount on sub components when rendering changes', () => {
@@ -361,6 +387,7 @@ describe('Component', () => {
 
             class X extends Spino.Component {
                 componentWillUnmount() {
+                    super.componentWillUnmount();
                     counter += 1;
                 }
 
@@ -396,6 +423,103 @@ describe('Component', () => {
             expect(document.querySelector('li')).toNotExist();
             expect(counter).toEqual(1);
         });
-         //*/
+    });
+
+    describe('Async components', () => {
+        it('can work with the default props', () => {
+            const document = new Document('<html><body><div></div></body></html>');
+            class MyComponent extends Spino.AsyncComponent {
+                render(props) {
+                    this.counter = (this.counter || 0) + 1;
+                    return Spino.h('em', {}, this.counter);
+                }
+            }
+            const myComponent = new MyComponent();
+            myComponent.mount(document.body);
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    try {
+                        expect(document.querySelector('em').innerHTML).toEqual('2');
+                        resolve();
+                    } catch (err) {
+                        reject(err);
+                    }
+                }, 10);
+            });
+        });
+        it('can load the props asynchronously', () => {
+            const document = new Document('<html><body><div></div></body></html>');
+            class MyComponent extends Spino.AsyncComponent {
+                getInitialProps() {
+                    return Promise.resolve({
+                        value: 123
+                    })
+                }
+
+                render(props) {
+                    return Spino.h('em', {}, props.value);
+                }
+            }
+            const myComponent = new MyComponent();
+            myComponent.mount(document.body);
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    try {
+                        expect(document.querySelector('em').innerHTML).toEqual('123');
+                        resolve();
+                    } catch (err) {
+                        reject(err);
+                    }
+                }, 10);
+            });
+        });
+    });
+
+    describe('works in browser environment', () => {
+        let ends = false;
+        beforeEach(() => {
+            global.requestAnimationFrame = function requestAnimationFrame(fn) {
+                if (ends === true) return;
+                setTimeout(fn, 1);
+            };
+            Spino.triggerRenderLoop();
+        });
+        afterEach(() => {
+            ends = true;
+        });
+        it('updates a component only once', () => {
+            let counter = 0;
+            const document = new Document('<html><body><div></div></body></html>');
+            class TestComponent extends Spino.Component {
+                constructor(props) {
+                    super(props);
+                    this.state = {
+                        value: 0,
+                    };
+                }
+                render(props, state) {
+                    counter += 1;
+                    return Spino.h('div', {}, state.value);
+                }
+            }
+            const testComponent = new TestComponent({});
+            testComponent.mount(document.querySelector('div'));
+            expect(counter).toEqual(1);
+            expect(testComponent.state.value).toEqual(0);
+            testComponent.setState({value: 1});
+            testComponent.setState({value: 2});
+
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    try {
+                        expect(counter).toEqual(2);
+                        expect(testComponent.state.value).toEqual(2);
+                        resolve();
+                    } catch (err) {
+                        reject(err);
+                    }
+                }, 100);
+            });
+        });
     });
 });

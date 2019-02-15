@@ -10,6 +10,10 @@
         "nano-dom": "^0.3.0"
     },
     "scripts": {
-        "test": "chawan ./*.spec.mjs"
+        "report": "c8 report --wrapper-length 0 -x '**.spec.mjs' --reporter html",
+        "test": "c8 --wrapper-length 0 -x '**.spec.mjs' --reporter text-summary chawan ./*.spec.mjs"
+    },
+    "devDependencies": {
+        "c8": "^3.4.0"
     }
 }
