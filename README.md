@@ -209,3 +209,8 @@ const renderResult = renderShallow(<List items={[1, 2, 3]}/>);
 
 console.log(renderResult); // === '<ul><li><ListItem value="1"></li><li><ListItem value="2"/></li><li><ListItem value="3"/></li></ul>'
 ```
+
+License
+=======
+
+[MIT](https://choosealicense.com/licenses/mit/)
