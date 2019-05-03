@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle, no-use-before-define */
 import {
     hash, flattenDeep, vdomClone, getCircularReplacer,
-} from './utils';
+} from './utils.mjs';
 
 const jsxAttributeMap = {
     htmlFor: 'for',
@@ -48,7 +48,7 @@ export class Component {
         this.props = newProps || {};
         // remap children prop to vdom nodes, if existent
         if (this.props.children && !this.props.children.isVdom) {
-            this.props.children = Array.from(this.props.children).map(node => (node.nodeType === 3 ? node.nodeValue : vdomClone(node, h)));
+            this.props.children = Array.from(this.props.children).filter(node => node).map(node => (node.nodeType === 3 ? node.nodeValue : vdomClone(node, h)));
             this.props.children.isVdom = true;
         }
         if (this.shouldComponentUpdate(this.props, this.state) === false) return;
@@ -296,3 +296,4 @@ export function triggerRenderLoop() {
 }
 triggerRenderLoop();
 /* eslint-enable no-underscore-dangle, no-use-before-define */
+

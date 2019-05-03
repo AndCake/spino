@@ -1,19 +1,17 @@
 {
     "name": "spino",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "description": "A super-tiny, fully-fledged, preact drop-in",
     "main": "index.mjs",
     "author": "Robert Kunze <quixotic.worx@gmail.com>",
     "license": "MIT",
     "devDependencies": {
-        "chawan": "^1.0.1",
-        "nano-dom": "^0.3.0"
+        "c8": "^3.4.0",
+        "chawan": "^1.0.10",
+        "nano-dom": "^0.3.3"
     },
     "scripts": {
         "report": "c8 report --wrapper-length 0 -x '**.spec.mjs' --reporter html",
         "test": "c8 --wrapper-length 0 -x '**.spec.mjs' --reporter text-summary chawan ./*.spec.mjs"
-    },
-    "devDependencies": {
-        "c8": "^3.4.0"
     }
 }
